@@ -1,0 +1,423 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Kenangan OSIS</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Figtree:wght@400;600;700&display=swap">
+<style>
+/* Layout: phone-sized stage, one screen at a time (cover -> home -> 4 pages), grey marble ground with black app tiles like the reference */
+:root{
+  --marble:#d9d9dc; --ink:#141416; --paper:#f3f3f4; --mute:#6a6a72; --line:#b9b9bf;
+  --script:'Caveat','Segoe Script',cursive; --body:'Figtree',system-ui,sans-serif;
+  color-scheme:light;
+}
+*{box-sizing:border-box}
+html,body{min-height:100%}
+body{
+  margin:0;color:var(--ink);font-family:var(--body);background-color:var(--marble);
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='600' height='600'%3E%3Cfilter id='f'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.006 .009' numOctaves='5' seed='7'/%3E%3CfeColorMatrix values='0 0 0 0 .45 0 0 0 0 .45 0 0 0 0 .47 0 0 0 1.5 -.45'/%3E%3C/filter%3E%3Crect width='600' height='600' filter='url(%23f)'/%3E%3C/svg%3E");
+  background-size:cover;background-attachment:fixed;
+  padding-block:24px 40px;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
+}
+.stage{max-width:430px;margin:0 auto;min-height:calc(100vh - 80px);display:flex;flex-direction:column;align-items:center;gap:20px}
+.screen{width:100%;display:none;flex-direction:column;align-items:center;gap:20px;animation:in .45s ease both}
+.screen.on{display:flex}
+@keyframes in{from{opacity:.0;transform:translateY(10px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.screen{animation:none}.env{animation:none!important}}
+h1,h2{font-family:var(--script);font-weight:700;margin:0;text-wrap:balance;text-align:center}
+h1{font-size:3.2rem;line-height:.95}
+h2{font-size:2.4rem}
+p{margin:0}
+button{font:inherit;cursor:pointer}
+:focus-visible{outline:3px solid var(--ink);outline-offset:3px}
+.pill{background:var(--ink);color:var(--paper);border:0;border-radius:999px;padding:.55em 1.6em;font-weight:700;font-size:.95rem}
+.back{align-self:center}
+.form{display:flex;flex-direction:column;gap:6px}
+.form label{font-size:.78rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;opacity:.75;margin-top:6px}
+.form input,.form textarea{font:inherit;width:100%;background:#26262a;color:var(--paper);border:1px solid #44444a;border-radius:12px;padding:10px 12px;resize:vertical}
+.form input:focus-visible,.form textarea:focus-visible{outline:2px solid var(--paper);outline-offset:2px}
+.pill.light{background:var(--paper);color:var(--ink);align-self:flex-start;margin-top:10px}
+.fmsg{font-size:.85rem;min-height:1.2em;opacity:.85}
+.del{background:transparent;border:1px solid #66666c;color:var(--paper);border-radius:999px;padding:.2em .9em;font-size:.75rem;margin-top:8px}
+.pill.ghost{background:transparent;color:var(--ink);border:2px solid var(--ink)}
+.thanks{margin-block:16vh 4vh;display:flex;flex-direction:column;align-items:center;gap:18px;text-align:center}
+.thanks h1{font-size:3.4rem;max-width:9ch}
+.sign{font-weight:600;color:var(--mute);font-size:.95rem}
+
+/* cover */
+.env{width:min(260px,70vw);aspect-ratio:1.45;position:relative;margin-top:14vh;animation:float 4s ease-in-out infinite}
+@keyframes float{50%{transform:translateY(-8px) rotate(-1deg)}}
+.env svg{width:100%;height:100%;filter:drop-shadow(0 10px 12px rgba(0,0,0,.25))}
+.sub{font-size:.9rem;color:var(--mute);text-align:center;letter-spacing:.02em}
+
+/* home */
+.cal{background:var(--ink);color:var(--paper);border-radius:22px;padding:16px 18px 18px;width:min(270px,100%)}
+.cal .mo{font-family:var(--script);font-size:2.4rem;text-align:right;line-height:1;margin-bottom:6px}
+.cal table{width:100%;border-collapse:collapse;text-align:center;font-size:.78rem;font-variant-numeric:tabular-nums}
+.cal th{font-weight:600;opacity:.65;padding:3px 0}
+.cal td{padding:4px 0}
+.cal td.today{position:relative;font-weight:700;color:var(--ink)}
+.cal td.today::before{content:"";position:absolute;inset:0;margin:auto;width:24px;height:24px;background:var(--paper);border-radius:50%;z-index:0}
+.cal td.today span{position:relative;z-index:1}
+.ask{font-weight:700;text-align:center;max-width:22ch;line-height:1.3}
+.apps{background:var(--ink);border-radius:30px;padding:18px;display:grid;grid-template-columns:repeat(2,96px);gap:16px}
+.app{background:var(--paper);color:var(--ink);border:0;border-radius:22px;width:96px;height:96px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;font-weight:700;font-size:.8rem;transition:transform .15s}
+.app:hover{transform:scale(1.05)}
+.app svg{width:30px;height:30px}
+.app{text-align:center;line-height:1.1;padding:6px}
+.empty{width:100%;text-align:center;color:var(--mute);font-size:.9rem;border:2px dashed var(--line);border-radius:20px;padding:28px 16px}
+
+/* black text card */
+.card{background:var(--ink);color:var(--paper);border-radius:22px;padding:22px 22px 24px;width:100%;line-height:1.65;font-size:.95rem}
+.card h3{font-family:var(--script);font-size:1.7rem;margin:0 0 4px}
+.card .from{font-family:var(--script);font-size:1.5rem;text-align:right;margin-top:10px}
+.stack{display:flex;flex-direction:column;gap:14px;width:100%}
+.stack .card{min-width:0}
+
+/* timeline */
+.tl{display:flex;flex-direction:column;gap:0;width:100%;border-left:2px solid var(--ink);margin-left:8px;padding-left:20px}
+.tl .it{position:relative;padding-bottom:22px}
+.tl .it::before{content:"";position:absolute;left:-28px;top:6px;width:12px;height:12px;border-radius:50%;background:var(--ink);border:3px solid var(--marble)}
+.tl time{font-size:.75rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--mute)}
+.tl b{display:block;font-family:var(--script);font-size:1.55rem;line-height:1.1;margin:2px 0}
+.tl p{font-size:.92rem;line-height:1.5}
+
+/* photos + video */
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;width:100%}
+.ph{border:6px solid var(--paper);background:var(--paper);box-shadow:0 4px 10px rgba(0,0,0,.2);padding:0;min-width:0}
+.ph:nth-child(odd){transform:rotate(-1.5deg)}.ph:nth-child(even){transform:rotate(1.5deg)}
+.ph img,.ph .ph-empty{display:block;width:100%;aspect-ratio:1;object-fit:cover}
+.ph-empty{background:#c4c4c9;display:grid;place-items:center;color:var(--mute);font-size:.8rem;font-weight:600}
+.cap{font-family:var(--script);font-size:1.15rem;text-align:center;padding:4px 2px 0}
+.vid{width:100%;background:var(--ink);border-radius:20px;padding:10px;color:var(--paper)}
+.vid video{width:100%;border-radius:12px;display:block;background:#000;aspect-ratio:16/9}
+.vid .ph-empty{background:#2a2a2e;color:#aaa;border-radius:12px;aspect-ratio:16/9}
+.vid .cap{color:var(--paper);padding:8px 4px 2px;text-align:left}
+.add{display:inline-block}
+.add input{position:absolute;width:1px;height:1px;opacity:0}
+.add:focus-within span{outline:3px solid var(--ink);outline-offset:3px}
+.add span{display:inline-block;background:transparent;border:2px dashed var(--ink);border-radius:999px;padding:.5em 1.4em;font-weight:700;font-size:.9rem;cursor:pointer}
+.media-tools{width:100%;display:flex;flex-direction:column;gap:10px;background:rgba(255,255,255,.45);border:1px solid var(--line);border-radius:18px;padding:14px}
+.media-tools input[type=text]{font:inherit;width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:#fff;color:var(--ink)}
+.media-tools .pill{align-self:flex-start}.media-status{font-size:.82rem;color:var(--mute);min-height:1.2em}
+.note{font-size:.8rem;color:var(--mute);text-align:center;max-width:32ch}
+.lb{position:fixed;inset:0;background:rgba(10,10,12,.92);display:none;align-items:center;justify-content:center;z-index:20;padding:16px}
+.lb.on{display:flex}.lb img{max-width:100%;max-height:100%;border:8px solid var(--paper)}
+</style>
+
+<div class="stage">
+
+  <!-- COVER -->
+  <section class="screen on" id="cover">
+    <h1 id="coverTitle">Happy Farewell<br>OSIS</h1>
+    <div class="env">
+      <svg viewBox="0 0 290 200" aria-hidden="true"><rect x="4" y="4" width="282" height="192" rx="8" fill="#8d8d93"/><path d="M4 12 L145 116 L286 12" fill="#a9a9af" stroke="#6f6f75" stroke-width="2"/><path d="M4 196 L110 100 M286 196 L180 100" stroke="#6f6f75" stroke-width="2" fill="none"/></svg>
+    </div>
+    <button class="pill" data-go="home">Open</button>
+    <p class="sub" id="coverSub">Satu amplop, banyak cerita.</p>
+  </section>
+
+  <!-- HOME -->
+  <section class="screen" id="home">
+    <p class="ask" id="homeAsk">Hari ini kita buka kenangan bareng.</p>
+    <div class="cal" id="cal"></div>
+    <p class="ask">Pilih mau buka yang mana dulu?</p>
+    <div class="apps">
+      <button class="app" data-go="ucapan"><svg viewBox="0 0 24 24" fill="none" stroke="#141416" stroke-width="1.8" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg>Ucapan</button>
+      <button class="app" data-go="kenangan"><svg viewBox="0 0 24 24" fill="none" stroke="#141416" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>Kenangan</button>
+      <button class="app" data-go="foto"><svg viewBox="0 0 24 24" fill="none" stroke="#141416" stroke-width="1.8" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="10" r="1.6"/><path d="M4 18l5-5 4 4 3-3 4 4"/></svg>Saat kita bersama</button>
+      <button class="app" data-go="video"><svg viewBox="0 0 24 24" fill="none" stroke="#141416" stroke-width="1.8" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="M10 9l5 3-5 3z" fill="#141416"/></svg>Kenangan kita</button>
+    </div>
+    <button class="pill" data-go="penutup">Halaman terakhir</button>
+  </section>
+
+  <!-- PENUTUP -->
+  <section class="screen" id="penutup">
+    <div class="thanks">
+      <h1>Terimakasih telah membimbing kami</h1>
+      <p class="sign" id="sign"></p>
+    </div>
+    <button class="pill" data-go="home">Kembali ke menu</button>
+    <button class="pill ghost" data-go="cover">Tutup amplop</button>
+  </section>
+
+  <!-- UCAPAN -->
+  <section class="screen" id="ucapan">
+    <h2>Ucapan</h2>
+    <div class="card" style="width:100%">
+      <h3>Tulis Ucapan</h3>
+      <p style="font-size:.85rem;margin-bottom:10px">Tinggalkan pesan atau ucapan untuk kakak-kakak OSIS.</p>
+      <form class="form" id="ucapanForm">
+        <label for="ucapanJudul">Judul ucapan</label>
+        <input id="ucapanJudul" maxlength="80" placeholder="Contoh: Terima kasih, kak!" required>
+        <label for="ucapanIsi">Isi ucapan</label>
+        <textarea id="ucapanIsi" rows="4" maxlength="1000" placeholder="Tulis ucapanmu di sini..." required></textarea>
+        <label for="ucapanDari">Nama pengirim</label>
+        <input id="ucapanDari" maxlength="60" placeholder="Nama kamu / kelas" required>
+        <button class="pill light" type="submit">Simpan Ucapan</button>
+        <p class="fmsg" id="ucapanStatus" role="status"></p>
+      </form>
+    </div>
+    <div class="empty" id="noMsg">Ucapan belum diisi.</div>
+    <div class="stack" id="msgs"></div>
+    <button class="pill back" data-go="home">Back</button>
+  </section>
+
+  <!-- KENANGAN -->
+  <section class="screen" id="kenangan">
+    <h2>Kenangan</h2>
+    <div class="tl" id="tl"></div>
+    <button class="pill back" data-go="home">Back</button>
+  </section>
+
+  <!-- FOTO -->
+  <section class="screen" id="foto">
+    <h2>Saat kita bersama</h2>
+    <div class="media-tools">
+      <label for="photoCaption">Keterangan foto (opsional)</label>
+      <input type="text" id="photoCaption" maxlength="100" placeholder="Contoh: Kenangan classmeet">
+      <label class="add"><input type="file" id="photoPicker" accept="image/*" multiple><span>＋ Tambahkan Foto</span></label>
+      <p class="media-status" id="photoStatus" role="status">Pilih satu atau beberapa foto dari perangkat.</p>
+    </div>
+    <div class="empty" id="noPhoto">Foto belum ditambahkan.</div>
+    <div class="grid" id="photos"></div>
+    <button class="pill back" data-go="home">Back</button>
+  </section>
+
+  <!-- VIDEO -->
+  <section class="screen" id="video">
+    <h2>Kenangan kita</h2>
+    <div class="media-tools">
+      <label for="videoCaption">Keterangan video (opsional)</label>
+      <input type="text" id="videoCaption" maxlength="100" placeholder="Contoh: Memori 1 tahun">
+      <label class="add"><input type="file" id="videoPicker" accept="video/*" multiple><span>＋ Tambahkan Video</span></label>
+      <p class="media-status" id="videoStatus" role="status">Pilih satu atau beberapa video dari perangkat.</p>
+    </div>
+    <div class="empty" id="noVid">Video belum ditambahkan.</div>
+    <div class="stack" id="vids"></div>
+    <button class="pill back" data-go="home">Back</button>
+  </section>
+</div>
+
+<div class="lb" id="lb"><img id="lbImg" alt=""></div>
+
+<script>
+/* ====== ISI KONTEN: ganti teks di bawah ini ====== */
+const CFG = {
+  nama: "OSIS SMP N2N",           // nama OSIS / sekolah
+  periode: "November 2025 – November 2026",
+  ucapan: [   // format: {judul:"Dari ...", isi:"...", dari:"Nama"}
+  ],
+  kenangan: [
+    {tgl:"November 2025", judul:"Pelantikan", isi:"Hari pertama resmi jadi pengurus. Tegang, tapi seru."},
+    {tgl:"Maret 2026", judul:"Bakti Sosial", isi:"Berbagi itu ternyata bikin kita makin dekat."},
+    {tgl:"Agustus 2026", judul:"Classmeet", isi:"Panitia paling sibuk, juara paling heboh."},
+    {tgl:"November 2026", judul:"Serah Terima Jabatan", isi:"Estafet diteruskan. Terima kasih untuk semuanya."}
+  ],
+  foto: [   // format: {src:"alamat foto", cap:"keterangan"}
+  ],
+  video: [  // format: {src:"alamat video", cap:"keterangan"}
+    {src:"kenangan.mp4", cap:"Kenangan OSIS"}
+  ]
+};
+/* ====== akhir isi konten ====== */
+
+const $ = s => document.querySelector(s);
+const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+$('#coverTitle').innerHTML = 'Happy Farewell<br>' + esc(CFG.nama.split(' ')[0]);
+$('#coverSub').textContent = 'Untuk kakak-kakak senior ' + CFG.nama + ' · ' + CFG.periode;
+$('#sign').textContent = 'Dari adik-adik ' + CFG.nama;
+$('#homeAsk').textContent = 'Hai, kakak-kakak ' + CFG.nama + '. Kita buka kenangan bareng.';
+
+/* navigation */
+function go(id){
+  document.querySelectorAll('.screen').forEach(s => s.classList.toggle('on', s.id === id));
+  window.scrollTo({top:0});
+}
+document.addEventListener('click', e => {
+  const b = e.target.closest('[data-go]'); if (b) go(b.dataset.go);
+});
+
+/* calendar */
+(function(){
+  const d = new Date(2026, 10, 2), y = d.getFullYear(), m = d.getMonth(); // Tanggal yang ditampilkan: 2 November 2026
+  const bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+  const first = (new Date(y, m, 1).getDay() + 6) % 7;      // Senin = 0
+  const days = new Date(y, m + 1, 0).getDate();
+  let h = '<div class="mo">' + bulan[m] + '</div><table><tr>' + ['S','S','R','K','J','S','M'].map(x => '<th>'+x+'</th>').join('') + '</tr><tr>';
+  let c = 0;
+  for (; c < first; c++) h += '<td></td>';
+  for (let i = 1; i <= days; i++, c++){
+    if (c % 7 === 0 && c) h += '</tr><tr>';
+    h += '<td' + (i === d.getDate() ? ' class="today"' : '') + '><span>' + i + '</span></td>';
+  }
+  $('#cal').innerHTML = h + '</tr></table>';
+})();
+
+/* ucapan: autosave lokal + sinkronisasi mading internet */
+const URL_MADING = "URL_MADING_KAMU"; // Ganti dengan URL Web App Google Apps Script
+const MSG_KEY = 'kenanganOSIS_ucapan_v1';
+let savedMsgs = [];
+try { savedMsgs = JSON.parse(localStorage.getItem(MSG_KEY) || '[]'); if (!Array.isArray(savedMsgs)) savedMsgs = []; } catch (_) { savedMsgs = []; }
+
+function renderMsgs(remoteMsgs = []){
+  const allMsgs = CFG.ucapan.concat(savedMsgs, remoteMsgs);
+  $('#msgs').innerHTML = allMsgs.map(u =>
+    '<div class="card"><h3>'+esc(u.judul || 'Ucapan')+'</h3><p style="white-space:pre-wrap">'+esc(u.isi || '')+'</p><div class="from">— '+esc(u.dari || 'Anonim')+'</div></div>'
+  ).join('');
+  $('#noMsg').hidden = allMsgs.length > 0;
+}
+
+async function muatUlangUcapan(){
+  if (!URL_MADING || URL_MADING === 'URL_MADING_KAMU') {
+    renderMsgs();
+    return;
+  }
+  try {
+    const res = await fetch(URL_MADING);
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const daftar = await res.json();
+    renderMsgs(Array.isArray(daftar) ? daftar : (Array.isArray(daftar.data) ? daftar.data : []));
+  } catch (err) {
+    console.warn('Ucapan online belum bisa dimuat:', err);
+    renderMsgs(); // Ucapan lokal tetap ditampilkan jika internet gagal
+  }
+}
+
+$('#ucapanForm').addEventListener('submit', async e => {
+  e.preventDefault();
+  const entry = {
+    judul: $('#ucapanJudul').value.trim(),
+    isi: $('#ucapanIsi').value.trim(),
+    dari: $('#ucapanDari').value.trim()
+  };
+  const status = $('#ucapanStatus');
+  if (!entry.judul || !entry.isi || !entry.dari) {
+    status.textContent = 'Isi semua kolom dulu ya.';
+    return;
+  }
+
+  // Simpan lokal terlebih dahulu supaya ucapan tidak hilang.
+  savedMsgs.push(entry);
+  try {
+    localStorage.setItem(MSG_KEY, JSON.stringify(savedMsgs));
+  } catch (_) {
+    savedMsgs.pop();
+    status.textContent = 'Penyimpanan lokal gagal. Coba buka web di browser biasa.';
+    return;
+  }
+
+  e.target.reset();
+  renderMsgs();
+  if (!URL_MADING || URL_MADING === 'URL_MADING_KAMU') {
+    status.textContent = 'Ucapan tersimpan di perangkat ini. Isi URL Google Apps Script agar bisa dibagikan lewat internet.';
+    return;
+  }
+
+  status.textContent = 'Ucapan tersimpan di perangkat. Sedang mengirim ke mading online...';
+  try {
+    const res = await fetch(URL_MADING, {
+      method: 'POST',
+      // Jangan tambahkan Content-Type application/json; ini membantu menghindari preflight CORS.
+      body: JSON.stringify(entry)
+    });
+    const hasil = await res.json();
+    if (hasil && (hasil.status === 'sukses' || hasil.success === true)) {
+      status.textContent = 'Ucapan berhasil dikirim ke mading online!';
+      await muatUlangUcapan();
+    } else {
+      status.textContent = 'Tersimpan di perangkat, tetapi mading online belum mengonfirmasi pengiriman.';
+    }
+  } catch (err) {
+    status.textContent = 'Tersimpan di perangkat, tetapi gagal menghubungi mading online. Periksa URL dan izin Apps Script.';
+    console.error('Gagal mengirim ucapan:', err);
+  }
+});
+
+renderMsgs();
+window.addEventListener('DOMContentLoaded', muatUlangUcapan);
+/* kenangan */
+$('#tl').innerHTML = CFG.kenangan.map(k => '<div class="it"><time>'+esc(k.tgl)+'</time><b>'+esc(k.judul)+'</b><p>'+esc(k.isi)+'</p></div>').join('');
+
+/* foto & video: media disimpan di IndexedDB pada browser/perangkat ini */
+const DB_NAME = 'kenanganOSIS_media_v1';
+let mediaDB;
+function openMediaDB(){
+  return new Promise((resolve,reject)=>{
+    if (!('indexedDB' in window)) { reject(new Error('Browser tidak mendukung penyimpanan media.')); return; }
+    const req = indexedDB.open(DB_NAME, 1);
+    req.onupgradeneeded = () => { const db = req.result; if (!db.objectStoreNames.contains('media')) db.createObjectStore('media', {keyPath:'id', autoIncrement:true}); };
+    req.onsuccess = () => { mediaDB=req.result; resolve(mediaDB); };
+    req.onerror = () => reject(req.error || new Error('Gagal membuka penyimpanan.'));
+  });
+}
+function mediaRequest(mode, action, value){
+  return new Promise((resolve,reject)=>{
+    const tx=mediaDB.transaction('media',mode), store=tx.objectStore('media');
+    let req;
+    if(action==='all') req=store.getAll(); else if(action==='add') req=store.add(value);
+    if(req){req.onsuccess=()=>resolve(req.result);req.onerror=()=>reject(req.error);}
+    tx.onerror=()=>reject(tx.error || new Error('Penyimpanan gagal.'));
+  });
+}
+const mediaUrls=[];
+function photoEl(src, cap){
+  const f=document.createElement('figure'); f.className='ph'; f.style.margin=0;
+  const i=document.createElement('img'); i.src=src; i.alt=cap||'Foto OSIS'; i.loading='lazy';
+  i.addEventListener('click',()=>{$('#lbImg').src=src;$('#lb').classList.add('on');});
+  f.appendChild(i); const c=document.createElement('div'); c.className='cap'; c.textContent=cap||''; f.appendChild(c); return f;
+}
+function vidEl(src, cap){
+  const d=document.createElement('div'); d.className='vid';
+  const v=document.createElement('video'); v.controls=true; v.playsInline=true; v.preload='metadata'; v.src=src; d.appendChild(v);
+  const c=document.createElement('div'); c.className='cap'; c.textContent=cap||''; d.appendChild(c); return d;
+}
+const gp=$('#photos'), gv=$('#vids');
+const syncEmpty=()=>{$('#noPhoto').hidden=gp.children.length>0;$('#noVid').hidden=gv.children.length>0;};
+function renderMedia(items){
+  items.forEach(item=>{
+    const url=URL.createObjectURL(item.blob); mediaUrls.push(url);
+    if(item.type==='photo') gp.appendChild(photoEl(url,item.cap));
+    if(item.type==='video') gv.appendChild(vidEl(url,item.cap));
+  });
+  syncEmpty();
+}
+async function initMedia(){
+  try { await openMediaDB(); const saved=await mediaRequest('readonly','all'); renderMedia(saved); }
+  catch(e){ $('#photoStatus').textContent='Penyimpanan media tidak tersedia. Coba buka file ini di Chrome.'; $('#videoStatus').textContent='Penyimpanan media tidak tersedia. Coba buka file ini di Chrome.'; }
+  // Konten bawaan dari konfigurasi, jika tersedia
+  CFG.foto.forEach(p=>{if(p.src)gp.appendChild(photoEl(p.src,p.cap));});
+  CFG.video.forEach(v=>{if(v.src)gv.appendChild(vidEl(v.src,v.cap));}); syncEmpty();
+}
+async function addMediaFiles(inputId, type, statusId, captionId){
+  const input=$('#'+inputId), status=$('#'+statusId), files=Array.from(input.files||[]);
+  if(!files.length)return;
+  if(!mediaDB){status.textContent='Penyimpanan belum siap. Coba muat ulang halaman.';return;}
+  const caption=$('#'+captionId).value.trim(); let count=0;
+  for(const file of files){
+    if(type==='photo' && !file.type.startsWith('image/')) continue;
+    if(type==='video' && !file.type.startsWith('video/')) continue;
+    try{
+      const item={type, name:file.name, cap:caption || file.name.replace(/\.[^.]+$/,''), blob:file, mime:file.type, addedAt:Date.now()};
+      await mediaRequest('readwrite','add',item);
+      const url=URL.createObjectURL(file); mediaUrls.push(url);
+      if(type==='photo') gp.appendChild(photoEl(url,item.cap)); else gv.appendChild(vidEl(url,item.cap));
+      count++;
+    }catch(e){status.textContent='Tidak bisa menyimpan file. Coba file yang lebih kecil atau browser lain.';break;}
+  }
+  syncEmpty();
+  if(count)status.textContent=`Berhasil menambahkan ${count} ${type==='photo'?'foto':'video'}. Tersimpan di browser/perangkat ini.`;
+  else if(!status.textContent.startsWith('Tidak bisa'))status.textContent='Tidak ada file yang berhasil ditambahkan.';
+  input.value='';
+}
+$('#photoPicker').addEventListener('change',()=>addMediaFiles('photoPicker','photo','photoStatus','photoCaption'));
+$('#videoPicker').addEventListener('change',()=>addMediaFiles('videoPicker','video','videoStatus','videoCaption'));
+$('#lb').addEventListener('click',()=>$('#lb').classList.remove('on'));
+document.addEventListener('keydown',e=>{if(e.key==='Escape')$('#lb').classList.remove('on');});
+initMedia();
+
+$('#noMsg').hidden = CFG.ucapan.length > 0;
+syncEmpty();
+</script>
+
+</body></html>
